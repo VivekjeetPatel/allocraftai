@@ -52,48 +52,53 @@ export default function Login() {
   };
 
   return (
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh', backgroundColor: '#f4f6f9' }}>
-      <div className="w-100" style={{ maxWidth: '400px' }}>
-        <h2 className="text-center mb-4" style={{ fontWeight: '700', color: '#2c3e50' }}>Smart Resource Allocation</h2>
-        <Card className="shadow-lg border-0 rounded-lg">
+    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh', background: 'transparent' }}>
+      <div className="w-100" style={{ maxWidth: '420px' }}>
+        <div className="text-center mb-5">
+           <h2 className="brand-text m-0" style={{ fontWeight: '800', color: '#1f2937', fontSize: '2.5rem' }}>Allocraft AI</h2>
+           <p className="text-muted mt-2">Smart Resource Management Node</p>
+        </div>
+        <Card className="glass-card shadow-lg p-3">
           <Card.Body className="p-4">
-            <h4 className="text-center mb-4">Log In</h4>
-            {error && <Alert variant="danger">{error}</Alert>}
+            <h5 className="text-center mb-4 fw-bold text-dark">System Authentication</h5>
+            {error && <Alert variant="danger" className="border-0 shadow-sm rounded-4 small">{error}</Alert>}
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="email">
-                <Form.Label>Email</Form.Label>
+                <Form.Label className="small fw-semibold text-secondary mb-1">Electronic Mail</Form.Label>
                 <Form.Control 
                   type="email" 
                   value={email} 
                   onChange={(e) => setEmail(e.target.value)} 
                   required 
-                  placeholder="Enter email"
+                  placeholder="Enter email address"
+                  className="bg-white"
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="role">
-                <Form.Label>Select Your Role</Form.Label>
-                <Form.Select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
-                  <option value="volunteer">Volunteer</option>
-                  <option value="volunteerHead">Volunteer Head</option>
-                  <option value="admin">Admin</option>
+                <Form.Label className="small fw-semibold text-secondary mb-1">Access Protocol</Form.Label>
+                <Form.Select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)} className="bg-white">
+                  <option value="volunteer">Volunteer Agent</option>
+                  <option value="volunteerHead">Division Head</option>
+                  <option value="admin">System Administrator</option>
                 </Form.Select>
               </Form.Group>
-              <Form.Group className="mb-4" controlId="password">
-                <Form.Label>Password</Form.Label>
+              <Form.Group className="mb-5" controlId="password">
+                <Form.Label className="small fw-semibold text-secondary mb-1">Security Key</Form.Label>
                 <Form.Control 
                   type="password" 
                   value={password} 
                   onChange={(e) => setPassword(e.target.value)} 
                   required 
                   placeholder="Password"
+                  className="bg-white"
                 />
               </Form.Group>
-              <Button disabled={isLoggingIn} className="w-100 mb-2 py-2" type="submit" variant="primary" style={{ fontWeight: '600' }}>
-                {isLoggingIn ? 'Logging in...' : 'Sign In'}
+              <Button disabled={isLoggingIn} className="w-100 py-3 shadow" type="submit" variant="dark">
+                {isLoggingIn ? 'Authenticating...' : 'Establish Secure Connection'}
               </Button>
             </Form>
-            <div className="text-center mt-3 text-muted small">
-              Please ensure you select the role assigned to you by the Admin.
+            <div className="text-center mt-4 text-muted small px-3">
+              Contact your System Administrator if you haven't received your security clearance.
             </div>
           </Card.Body>
         </Card>

@@ -19,23 +19,23 @@ export default function AppNavbar({ toggleSidebar }) {
   };
 
   return (
-    <Navbar bg="white" expand="lg" className="shadow-sm mb-4 px-3" style={{ borderBottom: '1px solid #eaeaea' }}>
+    <Navbar expand="lg" className="glass-panel mb-4 px-4 py-3" style={{ borderRadius: 'var(--pill-radius)', border: '1px solid rgba(255,255,255,0.8)' }}>
       <Container fluid className="px-0">
-        <Button variant="light" className="d-md-none me-2" onClick={toggleSidebar}>
+        <Button variant="outline-secondary" className="d-md-none me-3 border-0" onClick={toggleSidebar}>
           ☰
         </Button>
-        <Navbar.Brand className="fw-bold" style={{ color: '#2c3e50' }}>Resource Allocation</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-          <Nav className="align-items-center">
-            <span className="me-3 text-muted">
-              {currentUser?.name || currentUser?.email} ({role})
-            </span>
-            <Button variant="outline-danger" size="sm" onClick={handleLogout} style={{ fontWeight: '600' }}>
+        <Navbar.Brand className="brand-text fw-bold m-0" style={{ color: '#1f2937' }}>
+           NGO <span className="text-secondary fw-normal">Allocraft AI</span>
+        </Navbar.Brand>
+        <div className="d-flex align-items-center ms-auto">
+            <div className="d-none d-md-flex align-items-center bg-white px-3 py-1 me-3 shadow-sm border" style={{ borderRadius: 'var(--pill-radius)' }}>
+               <span className="text-dark fw-medium small me-1">{currentUser?.name || currentUser?.email}</span>
+               <span className="badge bg-light text-secondary border">{role}</span>
+            </div>
+            <Button variant="dark" size="sm" onClick={handleLogout} className="px-4 shadow-sm" style={{ borderRadius: 'var(--pill-radius)' }}>
               Log Out
             </Button>
-          </Nav>
-        </Navbar.Collapse>
+        </div>
       </Container>
     </Navbar>
   );

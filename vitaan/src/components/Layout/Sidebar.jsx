@@ -33,26 +33,35 @@ export default function Sidebar({ show, toggleSidebar }) {
 
   return (
     <div 
-      className={`sidebar-nav bg-dark text-white p-3 ${show ? 'd-block' : 'd-none d-md-block'}`} 
-      style={{ width: '250px', minHeight: '100vh', transition: 'left 0.3s ease', zIndex: 1000 }}
+      className={`glass-panel p-3 m-3 ${show ? 'd-block position-fixed' : 'd-none d-md-block'}`} 
+      style={{ 
+        width: '260px', 
+        height: 'calc(100vh - 2rem)', 
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 
+        zIndex: 1000,
+        borderRadius: 'var(--card-radius)',
+        left: show ? '0' : 'auto'
+      }}
     >
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h4 className="m-0" style={{ fontWeight: '700', letterSpacing: '1px' }}>Menu</h4>
+      <div className="d-flex justify-content-between align-items-center mb-4 px-2 pt-2">
+        <h4 className="m-0 brand-text text-dark" style={{ fontWeight: '700' }}>Menu</h4>
         {show && (
-          <button className="btn btn-sm btn-dark d-md-none" onClick={toggleSidebar}>
+          <button className="btn btn-sm btn-outline-dark d-md-none rounded-circle px-2" onClick={toggleSidebar}>
             ✕
           </button>
         )}
       </div>
-      <Nav className="flex-column gap-2">
+      <Nav className="flex-column gap-2 mt-4">
         {links.map((link) => (
           <NavLink 
             key={link.to} 
             to={link.to} 
             className={({ isActive }) => 
-              `nav-link text-white rounded p-2 ${isActive ? 'bg-primary shadow-sm' : 'hover-bg-secondary'}`
+              `nav-link text-dark px-3 py-2 ${isActive ? 'bg-white shadow-sm fw-bold' : ''}`
             }
+            style={{ borderRadius: 'var(--pill-radius)', transition: 'all 0.2s' }}
             end={link.to === '/admin' || link.to === '/volunteer-head' || link.to === '/volunteer'}
+            onClick={() => show && toggleSidebar()} // close on mobile
           >
             {link.label}
           </NavLink>
