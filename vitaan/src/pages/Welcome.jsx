@@ -63,12 +63,12 @@ export default function Welcome() {
         {/* Header */}
         <Row className="align-items-center mb-5">
           <Col md={12}>
-            <div className="text-center text-white mb-5">
+            <div className="welcome-header text-center text-white mb-5">
               <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🚀</div>
-              <h1 className="fw-bold" style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>
+              <h1 className="fw-bold" style={{ fontSize: '3.5rem', marginBottom: '1rem', letterSpacing: '-1px' }}>
                 Allocraft AI
               </h1>
-              <p style={{ fontSize: '1.3rem', opacity: 0.95, marginBottom: '2rem' }}>
+              <p style={{ fontSize: '1.3rem', opacity: 0.95, marginBottom: '2rem', fontWeight: '500' }}>
                 Smart Resource Management for NGOs & Volunteer Organizations
               </p>
               <p style={{ fontSize: '1rem', opacity: 0.85 }}>
@@ -80,10 +80,10 @@ export default function Welcome() {
 
         {/* Features */}
         <Row className="mb-5 g-4">
-          <Col md={4}>
-            <Card className="h-100 border-0 shadow-lg glass-card" style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>
+          <Col md={4} className="welcome-feature">
+            <Card className="h-100 border-0 shadow-lg glass-card">
               <Card.Body className="text-center text-white p-4">
-                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📋</div>
+                <div className="welcome-icon" style={{ fontSize: '3rem', marginBottom: '1rem' }}>📋</div>
                 <h5 className="fw-bold mb-3">Task Management</h5>
                 <p style={{ fontSize: '0.95rem', opacity: 0.9 }}>
                   Create, assign, and track tasks with ease. Monitor progress in real-time.
@@ -92,10 +92,10 @@ export default function Welcome() {
             </Card>
           </Col>
 
-          <Col md={4}>
-            <Card className="h-100 border-0 shadow-lg glass-card" style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>
+          <Col md={4} className="welcome-feature">
+            <Card className="h-100 border-0 shadow-lg glass-card">
               <Card.Body className="text-center text-white p-4">
-                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🤖</div>
+                <div className="welcome-icon" style={{ fontSize: '3rem', marginBottom: '1rem' }}>🤖</div>
                 <h5 className="fw-bold mb-3">AI-Powered</h5>
                 <p style={{ fontSize: '0.95rem', opacity: 0.9 }}>
                   Leverage Gemini AI for smart task analysis and volunteer assignments.
@@ -104,10 +104,10 @@ export default function Welcome() {
             </Card>
           </Col>
 
-          <Col md={4}>
-            <Card className="h-100 border-0 shadow-lg glass-card" style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}>
+          <Col md={4} className="welcome-feature">
+            <Card className="h-100 border-0 shadow-lg glass-card">
               <Card.Body className="text-center text-white p-4">
-                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👥</div>
+                <div className="welcome-icon" style={{ fontSize: '3rem', marginBottom: '1rem' }}>👥</div>
                 <h5 className="fw-bold mb-3">Team Collaboration</h5>
                 <p style={{ fontSize: '0.95rem', opacity: 0.9 }}>
                   Connect volunteers, share updates, and build stronger teams together.
@@ -126,23 +126,8 @@ export default function Welcome() {
                 <Button
                   onClick={() => navigate('/signup')}
                   size="lg"
-                  className="fw-bold shadow-lg px-5"
-                  style={{
-                    background: 'linear-gradient(135deg, #28a745, #20c997)',
-                    border: 'none',
-                    borderRadius: '12px',
-                    fontSize: '1.1rem',
-                    padding: '0.75rem 2.5rem',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.transform = 'translateY(-3px)';
-                    e.currentTarget.style.boxShadow = '0 16px 32px rgba(0,0,0,0.3)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
-                  }}
+                  className="fw-bold shadow-lg btn-gradient-primary"
+                  style={{ fontSize: '1.1rem' }}
                 >
                   ✨ Sign Up Now
                 </Button>
@@ -150,24 +135,8 @@ export default function Welcome() {
                 <Button
                   onClick={() => navigate('/login')}
                   size="lg"
-                  className="fw-bold shadow-lg px-5"
-                  style={{
-                    background: 'rgba(255,255,255,0.2)',
-                    border: '2px solid white',
-                    color: 'white',
-                    borderRadius: '12px',
-                    fontSize: '1.1rem',
-                    padding: '0.75rem 2.5rem',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.3)';
-                    e.currentTarget.style.transform = 'translateY(-3px)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }}
+                  className="fw-bold shadow-lg btn-outline-light"
+                  style={{ fontSize: '1.1rem' }}
                 >
                   🔐 Sign In
                 </Button>

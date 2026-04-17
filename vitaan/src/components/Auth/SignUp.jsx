@@ -111,18 +111,18 @@ export default function SignUp() {
   const formProgress = Math.round(((name ? 25 : 0) + (email ? 25 : 0) + (password ? 25 : 0) + (confirmPassword ? 25 : 0)) / 4);
 
   return (
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh', background: 'transparent', paddingTop: '2rem', paddingBottom: '2rem' }}>
+    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', paddingTop: '2rem', paddingBottom: '2rem' }}>
       <div className="w-100" style={{ maxWidth: '500px' }}>
         {/* Header */}
         <div className="text-center mb-5">
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✨</div>
-          <h2 className="brand-text m-0" style={{ fontWeight: '800', color: '#1f2937', fontSize: '2rem', marginBottom: '0.5rem' }}>Allocraft AI</h2>
-          <p className="text-muted" style={{ fontSize: '0.95rem' }}>Join Our Community of Volunteers 🚀</p>
+          <h2 className="brand-text m-0" style={{ fontWeight: '800', color: 'white', fontSize: '2rem', marginBottom: '0.5rem' }}>Allocraft AI</h2>
+          <p className="text-white" style={{ fontSize: '0.95rem', opacity: 0.9 }}>Join Our Community of Volunteers 🚀</p>
         </div>
 
         {/* Main Card */}
-        <Card className="glass-card shadow-lg border-0" style={{ borderRadius: '24px', overflow: 'hidden' }}>
-          <Card.Body className="p-4" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(245,247,250,0.95) 100%)' }}>
+        <Card className="shadow-lg border-0" style={{ borderRadius: '24px', overflow: 'hidden', background: 'rgba(255, 255, 255, 0.12)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.25)' }}>
+          <Card.Body className="p-5" style={{ background: 'rgba(255, 255, 255, 0.95)' }}>
             {/* Title */}
             <h5 className="text-center mb-2 fw-bold text-dark" style={{ fontSize: '1.3rem' }}>
               📝 Create Your Account
@@ -166,7 +166,7 @@ export default function SignUp() {
                   onChange={(e) => setName(e.target.value)} 
                   required 
                   placeholder="Enter your full name"
-                  className="glass-card border-2"
+                  className="border-2"
                   style={{ 
                     background: 'rgba(255,255,255,0.8)',
                     borderColor: name ? '#0d6efd' : '#d1d5db',
@@ -190,7 +190,7 @@ export default function SignUp() {
                   onChange={(e) => setEmail(e.target.value)} 
                   required 
                   placeholder="your.email@example.com"
-                  className="glass-card border-2"
+                  className="border-2"
                   style={{ 
                     background: 'rgba(255,255,255,0.8)',
                     borderColor: email ? '#0d6efd' : '#d1d5db',
@@ -211,7 +211,7 @@ export default function SignUp() {
                 <Form.Select 
                   value={role} 
                   onChange={(e) => setRole(e.target.value)} 
-                  className="glass-card border-2"
+                  className="border-2"
                   style={{ 
                     background: 'rgba(255,255,255,0.8)',
                     borderColor: '#0d6efd',
@@ -221,9 +221,9 @@ export default function SignUp() {
                   }}
                   disabled={isSigningUp}
                 >
-                  <option value="volunteer">👤 Volunteer Agent</option>
-                  <option value="volunteerHead">👨‍🏫 Division Head</option>
-                  <option value="admin">👨‍💼 System Administrator</option>
+                  <option value="volunteer">👤 Volunteer</option>
+                  <option value="volunteerHead">👨‍🏫 Volunteer Head</option>
+                  <option value="admin">👨‍💼 Administrator</option>
                 </Form.Select>
                 <small className="text-muted d-block mt-2">
                   {role === 'admin' ? '⚠️ Admin accounts require approval' : '✅ Your role can be changed later'}
@@ -241,7 +241,7 @@ export default function SignUp() {
                   onChange={(e) => setPassword(e.target.value)} 
                   required 
                   placeholder="6+ characters"
-                  className="glass-card border-2"
+                  className="border-2"
                   style={{ 
                     background: 'rgba(255,255,255,0.8)',
                     borderColor: password ? '#0d6efd' : '#d1d5db',
@@ -275,7 +275,7 @@ export default function SignUp() {
                   onChange={(e) => setConfirmPassword(e.target.value)} 
                   required 
                   placeholder="Confirm password"
-                  className="glass-card border-2"
+                  className="border-2"
                   style={{ 
                     background: 'rgba(255,255,255,0.8)',
                     borderColor: confirmPassword && password === confirmPassword ? '#28a745' : confirmPassword && password !== confirmPassword ? '#dc3545' : '#d1d5db',
@@ -296,25 +296,25 @@ export default function SignUp() {
               <Button 
                 disabled={isSigningUp || !name || !email || !password || !confirmPassword || password !== confirmPassword} 
                 className="w-100 py-3 shadow mb-3 fw-bold"
-                type="submit" 
-                variant="dark"
+                type="submit"
                 style={{
                   borderRadius: '12px',
                   fontSize: '1rem',
                   letterSpacing: '0.5px',
-                  background: isSigningUp ? '#6c757d' : '#1f2937',
+                  background: isSigningUp ? '#6c757d' : 'linear-gradient(135deg, #28a745, #20c997)',
                   border: 'none',
+                  color: 'white',
                   transition: 'all 0.3s ease'
                 }}
                 onMouseEnter={e => {
                   if (!isSigningUp && name && email && password && confirmPassword && password === confirmPassword) {
-                    e.currentTarget.style.background = '#0f172a';
+                    e.currentTarget.style.background = 'linear-gradient(135deg, #20c997, #28a745)';
                     e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(0,0,0,0.2)';
+                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(40, 167, 69, 0.3)';
                   }
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.background = '#1f2937';
+                  e.currentTarget.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = '';
                 }}
