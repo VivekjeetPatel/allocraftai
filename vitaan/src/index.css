@@ -153,3 +153,93 @@ a:hover {
   border-bottom: 1px solid rgba(0,0,0,0.03) !important;
   vertical-align: middle;
 }
+
+/* Animation Utilities */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-up {
+  animation: slideInUp 0.3s ease-out;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(107, 114, 128, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.5);
+}
+
+/* Status Colors */
+.bg-pending {
+  background-color: #6c757d !important;
+}
+
+.bg-in-progress {
+  background-color: #007bff !important;
+}
+
+.bg-completed {
+  background-color: #28a745 !important;
+}
+
+/* Task Card Specific */
+.task-card {
+  cursor: pointer !important;
+}
+
+.task-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Improved Form Elements */
+.form-control:focus,
+.form-select:focus {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 0 0 0.25rem rgba(75, 85, 99, 0.15) !important;
+}
+
+/* Empty State Styling */
+.empty-state {
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--secondary-grey);
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}

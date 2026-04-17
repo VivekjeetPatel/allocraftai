@@ -66,6 +66,32 @@ export default function Sidebar({ show, toggleSidebar }) {
             {link.label}
           </NavLink>
         ))}
+
+        {/* Divider */}
+        <hr className="my-3" />
+
+        {/* Additional Links */}
+        <NavLink 
+          to="/chat" 
+          className={({ isActive }) => 
+            `nav-link text-dark px-3 py-2 ${isActive ? 'bg-white shadow-sm fw-bold' : ''}`
+          }
+          style={{ borderRadius: 'var(--pill-radius)', transition: 'all 0.2s' }}
+          onClick={() => show && toggleSidebar()}
+        >
+          🤖 AI Chat
+        </NavLink>
+
+        <NavLink 
+          to="/profile" 
+          className={({ isActive }) => 
+            `nav-link text-dark px-3 py-2 ${isActive ? 'bg-white shadow-sm fw-bold' : ''}`
+          }
+          style={{ borderRadius: 'var(--pill-radius)', transition: 'all 0.2s' }}
+          onClick={() => show && toggleSidebar()}
+        >
+          👤 My Profile
+        </NavLink>
       </Nav>
     </div>
   );

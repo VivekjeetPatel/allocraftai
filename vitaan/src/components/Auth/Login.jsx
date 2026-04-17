@@ -98,7 +98,13 @@ export default function Login() {
               </Button>
             </Form>
             <div className="text-center mt-4 text-muted small px-3">
-              Contact your System Administrator if you haven't received your security clearance.
+              Don't have an account?{' '}
+              <a href="/signup" className="text-primary fw-bold text-decoration-none">
+                Sign up here
+              </a>
+            </div>
+            <div className="text-center mt-2 text-muted text-opacity-75 small px-3">
+              Or contact your System Administrator if you need help.
             </div>
           </Card.Body>
         </Card>
