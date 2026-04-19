@@ -18,6 +18,7 @@ export default function AIChatBox() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const messagesEndRef = useRef(null);
 
   // Auto-scroll to latest message
@@ -88,32 +89,110 @@ export default function AIChatBox() {
     }
   };
 
+  const clearChat = () => {
+    if (window.confirm('Are you sure you want to clear the chat history?')) {
+      setMessages([
+        {
+          id: 1,
+          text: 'Hello! 👋 Chat cleared. How can I help you now?',
+          sender: 'ai',
+          timestamp: new Date(),
+        }
+      ]);
+      toast.success('Chat cleared');
+    }
+  };
+
+  const copyMessage = (text) => {
+    navigator.clipboard.writeText(text);
+    toast.success('Copied to clipboard!');
+  };
+
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: '16px', overflow: 'hidden' }}>
-      {/* Header */}
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: '20px', overflow: 'hidden', background: 'white' }}>
+      {/* Enhanced Header */}
       <div style={{
-        background: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         color: 'white',
-        padding: '1.5rem',
-        textAlign: 'center',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+        padding: '1.75rem 2rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        boxShadow: '0 8px 24px rgba(102, 126, 234, 0.3)'
       }}>
-        <h5 className="mb-1 fw-bold" style={{ fontSize: '1.2rem' }}>
-          🤖 AI Assistant (Powered by Gemini)
-        </h5>
-        <small style={{ opacity: 0.9 }}>Ask me anything about your tasks and projects</small>
+        <div>
+          <h5 className="mb-1 fw-bold" style={{ fontSize: '1.3rem', letterSpacing: '-0.5px' }}>
+            🤖 AI Assistant
+          </h5>
+          <small style={{ opacity: 0.85, fontSize: '0.9rem' }}>Powered by Google Gemini</small>
+        </div>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            style={{
+              background: 'rgba(255,255,255,0.2)',
+              border: 'none',
+              borderRadius: '8px',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              transition: 'all 0.2s ease',
+              backdropFilter: 'blur(10px)'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+          >
+            ⚙️
+          </button>
+        </div>
       </div>
+
+      {/* Settings Menu */}
+      {showSettings && (
+        <div style={{
+          background: 'rgba(245, 247, 250, 0.95)',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
+          padding: '1rem 2rem',
+          display: 'flex',
+          gap: '1rem'
+        }}>
+          <button
+            onClick={clearChat}
+            style={{
+              background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+              border: 'none',
+              borderRadius: '8px',
+              color: 'white',
+              padding: '0.6rem 1.2rem',
+              cursor: 'pointer',
+              fontWeight: '600',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            🗑️ Clear Chat
+          </button>
+        </div>
+      )}
 
       {/* Messages Container */}
       <div
         style={{
           flex: 1,
           overflowY: 'auto',
-          padding: '1.5rem',
-          background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
+          padding: '2rem 2rem',
+          background: 'linear-gradient(135deg, #f8fafc 0%, #f3f4f6 100%)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '1rem'
+          gap: '1.25rem'
         }}
       >
         {messages.map((message) => (
@@ -122,82 +201,131 @@ export default function AIChatBox() {
             style={{
               display: 'flex',
               justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
-              animation: 'slideInUp 0.3s ease-out'
+              animation: 'fadeInUp 0.4s ease-out'
             }}
           >
             {/* AI Avatar */}
             {message.sender === 'ai' && (
               <div
                 style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '36px',
+                  height: '36px',
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #007bff, #0d6efd)',
+                  background: 'linear-gradient(135deg, #667eea, #764ba2)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: 'white',
-                  fontSize: '1rem',
+                  fontSize: '1.1rem',
                   flexShrink: 0,
                   marginRight: '0.75rem',
-                  boxShadow: '0 2px 8px rgba(13, 110, 253, 0.3)'
+                  boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+                  border: '2px solid white'
                 }}
               >
                 🤖
               </div>
             )}
 
-            {/* Message Bubble */}
+            {/* Message Bubble with Copy Action */}
             <div
               style={{
                 maxWidth: '70%',
-                padding: '0.75rem 1.25rem',
-                borderRadius: message.sender === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
-                background: message.sender === 'user'
-                  ? 'linear-gradient(135deg, #1f2937, #374151)'
-                  : 'white',
-                color: message.sender === 'user' ? 'white' : '#1f2937',
-                boxShadow: message.sender === 'user'
-                  ? '0 4px 12px rgba(31, 41, 55, 0.2)'
-                  : '0 2px 8px rgba(0, 0, 0, 0.08)',
-                wordBreak: 'break-word',
-                lineHeight: '1.5'
+                animation: 'slideInUp 0.3s ease-out'
               }}
             >
-              <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
-                {message.text}
-              </p>
-              <small
+              <div
                 style={{
-                  display: 'block',
-                  marginTop: '0.5rem',
-                  opacity: 0.7,
-                  fontSize: '0.75rem'
+                  padding: '1rem 1.5rem',
+                  borderRadius: message.sender === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
+                  background: message.sender === 'user'
+                    ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                    : 'white',
+                  color: message.sender === 'user' ? 'white' : '#1f2937',
+                  boxShadow: message.sender === 'user'
+                    ? '0 8px 20px rgba(102, 126, 234, 0.3)'
+                    : '0 4px 12px rgba(0, 0, 0, 0.08)',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.6',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  position: 'relative'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = message.sender === 'user'
+                    ? '0 12px 28px rgba(102, 126, 234, 0.4)'
+                    : '0 8px 20px rgba(0, 0, 0, 0.12)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = message.sender === 'user'
+                    ? '0 8px 20px rgba(102, 126, 234, 0.3)'
+                    : '0 4px 12px rgba(0, 0, 0, 0.08)';
+                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                {message.timestamp.toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
-              </small>
+                <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
+                  {message.text}
+                </p>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: '0.75rem',
+                  paddingTop: '0.75rem',
+                  borderTop: `1px solid ${message.sender === 'user' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.05)'}`
+                }}>
+                  <small style={{ opacity: 0.7, fontSize: '0.8rem' }}>
+                    {message.timestamp.toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </small>
+                  <button
+                    onClick={() => copyMessage(message.text)}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: message.sender === 'user' ? 'rgba(255,255,255,0.8)' : '#6b7280',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: '4px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = message.sender === 'user' 
+                        ? 'rgba(255,255,255,0.1)' 
+                        : 'rgba(0,0,0,0.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent';
+                    }}
+                    title="Copy message"
+                  >
+                    📋
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* User Avatar */}
             {message.sender === 'user' && (
               <div
                 style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '36px',
+                  height: '36px',
                   borderRadius: '50%',
                   background: 'linear-gradient(135deg, #28a745, #20c997)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: 'white',
-                  fontSize: '1rem',
+                  fontSize: '1.1rem',
                   flexShrink: 0,
                   marginLeft: '0.75rem',
-                  boxShadow: '0 2px 8px rgba(40, 167, 69, 0.3)'
+                  boxShadow: '0 4px 12px rgba(40, 167, 69, 0.4)',
+                  border: '2px solid white'
                 }}
               >
                 👤
@@ -208,63 +336,59 @@ export default function AIChatBox() {
 
         {/* Typing Indicator */}
         {isTyping && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', animation: 'fadeInUp 0.3s ease-out' }}>
             <div
               style={{
-                width: '32px',
-                height: '32px',
+                width: '36px',
+                height: '36px',
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, #007bff, #0d6efd)',
+                background: 'linear-gradient(135deg, #667eea, #764ba2)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                fontSize: '1rem',
-                flexShrink: 0
+                fontSize: '1.1rem',
+                flexShrink: 0,
+                boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+                border: '2px solid white'
               }}
             >
               🤖
             </div>
             <div
               style={{
-                padding: '0.75rem 1.25rem',
+                padding: '1rem 1.5rem',
                 borderRadius: '20px 20px 20px 4px',
                 background: 'white',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
                 display: 'flex',
-                gap: '0.4rem',
+                gap: '0.5rem',
                 alignItems: 'center'
               }}
             >
-              <div
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: '#999',
-                  animation: 'typing 1.4s infinite'
-                }}
-              />
-              <div
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: '#999',
-                  animation: 'typing 1.4s infinite',
-                  animationDelay: '0.2s'
-                }}
-              />
-              <div
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: '#999',
-                  animation: 'typing 1.4s infinite',
-                  animationDelay: '0.4s'
-                }}
-              />
+              <div style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                animation: 'bounce 1.4s infinite'
+              }} />
+              <div style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                animation: 'bounce 1.4s infinite',
+                animationDelay: '0.2s'
+              }} />
+              <div style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                animation: 'bounce 1.4s infinite',
+                animationDelay: '0.4s'
+              }} />
             </div>
           </div>
         )}
@@ -274,12 +398,12 @@ export default function AIChatBox() {
 
       {/* Input Form */}
       <div style={{
-        padding: '1.5rem',
+        padding: '1.5rem 2rem',
         background: 'white',
         borderTop: '1px solid rgba(0, 0, 0, 0.05)',
-        boxShadow: '0 -2px 8px rgba(0, 0, 0, 0.04)'
+        boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.04)'
       }}>
-        <Form onSubmit={handleSendMessage} style={{ display: 'flex', gap: '0.75rem' }}>
+        <Form onSubmit={handleSendMessage} style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.75rem' }}>
           <Form.Control
             type="text"
             placeholder="Ask me anything... 💬"
@@ -288,14 +412,15 @@ export default function AIChatBox() {
             disabled={isLoading || isTyping}
             style={{
               borderRadius: '24px',
-              padding: '0.75rem 1.25rem',
+              padding: '0.875rem 1.5rem',
               border: '2px solid #e5e7eb',
               fontSize: '0.95rem',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.2s ease',
+              fontWeight: '500'
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = '#0d6efd';
-              e.target.style.boxShadow = '0 0 0 3px rgba(13, 110, 253, 0.1)';
+              e.target.style.borderColor = '#667eea';
+              e.target.style.boxShadow = '0 0 0 4px rgba(102, 126, 234, 0.1)';
             }}
             onBlur={(e) => {
               e.target.style.borderColor = '#e5e7eb';
@@ -307,23 +432,27 @@ export default function AIChatBox() {
             disabled={isLoading || isTyping || !inputValue.trim()}
             style={{
               borderRadius: '24px',
-              padding: '0.75rem 1.5rem',
-              background: inputValue.trim() ? 'linear-gradient(135deg, #1f2937, #374151)' : '#d1d5db',
+              padding: '0.875rem 1.75rem',
+              background: inputValue.trim() ? 'linear-gradient(135deg, #667eea, #764ba2)' : '#d1d5db',
               border: 'none',
-              fontSize: '1rem',
+              fontSize: '1.1rem',
               fontWeight: '600',
               transition: 'all 0.3s ease',
-              minWidth: '60px'
+              minWidth: '70px',
+              color: 'white',
+              boxShadow: inputValue.trim() ? '0 4px 12px rgba(102, 126, 234, 0.3)' : 'none'
             }}
             onMouseEnter={(e) => {
               if (inputValue.trim()) {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.2)';
+                e.currentTarget.style.boxShadow = '0 8px 20px rgba(102, 126, 234, 0.4)';
               }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
+              if (inputValue.trim()) {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
+              }
             }}
           >
             {isLoading || isTyping ? (
@@ -333,12 +462,23 @@ export default function AIChatBox() {
             )}
           </Button>
         </Form>
-        <small style={{ display: 'block', marginTop: '0.75rem', textAlign: 'center', color: '#6b7280' }}>
-          💡 Tip: Try asking about "tasks", "team", "projects", or "queries"
+        <small style={{ display: 'block', textAlign: 'center', color: '#6b7280', fontSize: '0.85rem' }}>
+          💡 Try: "Analyze my tasks", "Suggest projects", "Team insights", or "What should I do?"
         </small>
       </div>
 
       <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(15px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
         @keyframes slideInUp {
           from {
             opacity: 0;
@@ -358,6 +498,17 @@ export default function AIChatBox() {
           30% {
             opacity: 1;
             transform: translateY(-10px);
+          }
+        }
+
+        @keyframes bounce {
+          0%, 100% {
+            opacity: 0.5;
+            transform: translateY(0);
+          }
+          50% {
+            opacity: 1;
+            transform: translateY(-8px);
           }
         }
       `}</style>
