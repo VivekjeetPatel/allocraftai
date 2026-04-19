@@ -52,53 +52,83 @@ export default function Login() {
   };
 
   return (
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh', background: 'transparent' }}>
+    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
       <div className="w-100" style={{ maxWidth: '420px' }}>
         <div className="text-center mb-5">
-           <h2 className="brand-text m-0" style={{ fontWeight: '800', color: '#1f2937', fontSize: '2.5rem' }}>Allocraft AI</h2>
-           <p className="text-muted mt-2">Smart Resource Management Node</p>
+           <h2 className="brand-text m-0" style={{ fontWeight: '800', color: 'white', fontSize: '2.5rem' }}>Allocraft AI</h2>
+           <p className="text-white mt-2" style={{ opacity: 0.9 }}>Smart Resource Management</p>
         </div>
-        <Card className="glass-card shadow-lg p-3">
-          <Card.Body className="p-4">
-            <h5 className="text-center mb-4 fw-bold text-dark">System Authentication</h5>
-            {error && <Alert variant="danger" className="border-0 shadow-sm rounded-4 small">{error}</Alert>}
+        <Card className="glass-card shadow-lg p-3" style={{ background: 'rgba(255, 255, 255, 0.12)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.25)' }}>
+          <Card.Body className="p-5">
+            <h5 className="text-center mb-4 fw-bold" style={{ color: 'white', fontSize: '1.3rem' }}>Welcome Back</h5>
+            {error && <Alert variant="danger" className="border-0 shadow-sm rounded-4 small" style={{ background: 'rgba(220, 53, 69, 0.9)', color: 'white', borderRadius: '12px' }}>{error}</Alert>}
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="email">
-                <Form.Label className="small fw-semibold text-secondary mb-1">Electronic Mail</Form.Label>
+                <Form.Label className="fw-semibold text-white mb-2">Email Address</Form.Label>
                 <Form.Control 
                   type="email" 
                   value={email} 
                   onChange={(e) => setEmail(e.target.value)} 
                   required 
-                  placeholder="Enter email address"
-                  className="bg-white"
+                  placeholder="Enter your email"
+                  className="bg-white border-0"
+                  style={{ borderRadius: '10px', padding: '0.75rem', fontSize: '1rem' }}
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="role">
-                <Form.Label className="small fw-semibold text-secondary mb-1">Access Protocol</Form.Label>
-                <Form.Select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)} className="bg-white">
-                  <option value="volunteer">Volunteer Agent</option>
-                  <option value="volunteerHead">Division Head</option>
-                  <option value="admin">System Administrator</option>
+                <Form.Label className="fw-semibold text-white mb-2">Your Role</Form.Label>
+                <Form.Select 
+                  value={selectedRole} 
+                  onChange={(e) => setSelectedRole(e.target.value)} 
+                  className="bg-white border-0"
+                  style={{ borderRadius: '10px', padding: '0.75rem', fontSize: '1rem' }}
+                >
+                  <option value="volunteer">Volunteer</option>
+                  <option value="volunteerHead">Volunteer Head</option>
+                  <option value="admin">Administrator</option>
                 </Form.Select>
               </Form.Group>
               <Form.Group className="mb-5" controlId="password">
-                <Form.Label className="small fw-semibold text-secondary mb-1">Security Key</Form.Label>
+                <Form.Label className="fw-semibold text-white mb-2">Password</Form.Label>
                 <Form.Control 
                   type="password" 
                   value={password} 
                   onChange={(e) => setPassword(e.target.value)} 
                   required 
-                  placeholder="Password"
-                  className="bg-white"
+                  placeholder="Enter your password"
+                  className="bg-white border-0"
+                  style={{ borderRadius: '10px', padding: '0.75rem', fontSize: '1rem' }}
                 />
               </Form.Group>
-              <Button disabled={isLoggingIn} className="w-100 py-3 shadow" type="submit" variant="dark">
-                {isLoggingIn ? 'Authenticating...' : 'Establish Secure Connection'}
+              <Button 
+                disabled={isLoggingIn} 
+                className="w-100 py-3 shadow fw-bold" 
+                type="submit" 
+                style={{
+                  background: 'linear-gradient(135deg, #28a745, #20c997)',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontSize: '1.1rem',
+                  color: 'white',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                {isLoggingIn ? '🔄 Signing in...' : '✨ Sign In'}
               </Button>
             </Form>
-            <div className="text-center mt-4 text-muted small px-3">
-              Contact your System Administrator if you haven't received your security clearance.
+            <div className="text-center mt-4">
+              <p className="text-white" style={{ opacity: 0.9 }}>
+                Don't have an account?{' '}
+                <a 
+                  href="/signup" 
+                  className="fw-bold"
+                  style={{ color: '#20c997', textDecoration: 'none', transition: 'all 0.2s' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#28a745'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#20c997'}
+                >
+                  Sign up here
+                </a>
+              </p>
             </div>
           </Card.Body>
         </Card>

@@ -6,43 +6,296 @@ admin.initializeApp();
 const db = admin.firestore();
 
 // AI Query/Task Logic
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY; 
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-exports.askGemini = onCall(async (request) => {
+// ========================
+// 1. CHAT WITH GEMINI
+// ========================
+exports.aiChat = onCall(async (request) => {
   if (!GEMINI_API_KEY) {
     throw new HttpsError("internal", "Gemini API key not configured.");
   }
-  const { type, payload } = request.data;
-  let systemPrompt = "";
-  let userMessage = "";
 
-  if (type === "queryResolver") {
-    systemPrompt = "You are a helpful assistant for an NGO project management platform. You have knowledge about the platform's projects and tasks. Answer the user's query helpfully and concisely.";
-    userMessage = `Project Context: ${payload.projectTitle || 'Unknown'}\nUser Query: ${payload.query}`;
-  } 
-  else if (type === "taskRecommendation") {
-    systemPrompt = "You are an expert NGO project manager. Given the following project details, generate a list of 6 to 10 specific actionable tasks needed to complete this project. Return the tasks strictly as a JSON array with fields: title (string), description (string), estimatedDays (number). Do not return markdown formatted codeblocks, only pure JSON string.";
-    userMessage = `Project title: ${payload.title}\nProject description: ${payload.description}`;
-  } 
-  else {
-    throw new HttpsError("invalid-argument", "Unknown type requested.");
+  const { message, context = {} } = request.data;
+
+  if (!message) {
+    throw new HttpsError("invalid-argument", "Message is required.");
   }
 
+  const systemPrompt = `You are an intelligent AI assistant for Allocraft AI - a volunteer management platform for NGOs. 
+You help volunteers with:
+- Task management and tracking
+- Team collaboration
+- Project information
+- Query resolution
+- Guidance on platform features
+
+Be helpful, friendly, and concise. Use emojis when appropriate.
+Context: ${JSON.stringify(context)}`;
+
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        system_instruction: { parts: { text: systemPrompt } },
-        contents: [ { parts: [{ text: userMessage }] } ]
-      })
-    });
-    if (!response.ok) throw new HttpsError("internal", "Gemini API error.");
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: { text: systemPrompt } },
+          contents: [{ parts: [{ text: message }] }],
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`Gemini API error: ${error.error?.message || "Unknown error"}`);
+    }
+
     const data = await response.json();
-    return { text: data.candidates?.[0]?.content?.parts?.[0]?.text || "" };
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "I couldn't generate a response. Please try again.";
+
+    return { reply };
   } catch (err) {
-    logger.error("Gemini Error", err);
-    throw new HttpsError("internal", err.message);
+    logger.error("AI Chat Error", err);
+    throw new HttpsError("internal", err.message || "Failed to get AI response");
+  }
+});
+
+// ========================
+// 2. ANALYZE TASKS
+// ========================
+exports.analyzeTask = onCall(async (request) => {
+  if (!GEMINI_API_KEY) {
+    throw new HttpsError("internal", "Gemini API key not configured.");
+  }
+
+  const { taskTitle, taskDescription, projectTitle } = request.data;
+
+  if (!taskTitle || !taskDescription) {
+    throw new HttpsError("invalid-argument", "Task title and description are required.");
+  }
+
+  const systemPrompt = `You are an expert project analyst. Analyze the given task and provide:
+1. Complexity level (Easy/Medium/Hard)
+2. Estimated duration in days
+3. Required skills
+4. Key challenges
+5. Success criteria
+
+Respond in JSON format: { complexity, estimatedDays, requiredSkills: [], challenges: [], successCriteria: [] }`;
+
+  const userMessage = `Project: ${projectTitle || "Unknown"}
+Task Title: ${taskTitle}
+Task Description: ${taskDescription}`;
+
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: { text: systemPrompt } },
+          contents: [{ parts: [{ text: userMessage }] }],
+        }),
+      }
+    );
+
+    if (!response.ok) throw new Error("Gemini API error");
+
+    const data = await response.json();
+    let analysis = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+    
+    // Extract JSON from response if wrapped in markdown
+    const jsonMatch = analysis.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      analysis = jsonMatch[0];
+    }
+
+    return { analysis: JSON.parse(analysis) };
+  } catch (err) {
+    logger.error("Task Analysis Error", err);
+    throw new HttpsError("internal", "Failed to analyze task");
+  }
+});
+
+// ========================
+// 3. AUTO-ASSIGN TASKS
+// ========================
+exports.autoAssignTasks = onCall(async (request) => {
+  if (!GEMINI_API_KEY) {
+    throw new HttpsError("internal", "Gemini API key not configured.");
+  }
+
+  const { projectId, tasks, volunteers } = request.data;
+
+  if (!projectId || !tasks || !volunteers || tasks.length === 0 || volunteers.length === 0) {
+    throw new HttpsError("invalid-argument", "Project ID, tasks, and volunteers are required.");
+  }
+
+  const systemPrompt = `You are an expert task assignment manager. Given a list of tasks and volunteers, assign tasks to the most suitable volunteers based on:
+1. Skill match
+2. Current workload
+3. Task complexity and volunteer expertise
+4. Volunteer availability
+
+Return a JSON array: [{ taskId, volunteerId, matchScore (0-100), reason }]
+Ensure fair distribution of work.`;
+
+  const userMessage = `Tasks:
+${JSON.stringify(tasks, null, 2)}
+
+Volunteers:
+${JSON.stringify(volunteers, null, 2)}`;
+
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: { text: systemPrompt } },
+          contents: [{ parts: [{ text: userMessage }] }],
+        }),
+      }
+    );
+
+    if (!response.ok) throw new Error("Gemini API error");
+
+    const data = await response.json();
+    let assignments = data.candidates?.[0]?.content?.parts?.[0]?.text || "[]";
+    
+    // Extract JSON from response
+    const jsonMatch = assignments.match(/\[[\s\S]*\]/);
+    if (jsonMatch) {
+      assignments = jsonMatch[0];
+    }
+
+    const parsedAssignments = JSON.parse(assignments);
+
+    // Apply assignments to Firestore
+    const batch = db.batch();
+    for (const assignment of parsedAssignments) {
+      const taskRef = db.collection("projects").doc(projectId).collection("tasks").doc(assignment.taskId);
+      batch.update(taskRef, {
+        assignedTo: assignment.volunteerId,
+        status: "pending",
+        assignedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    }
+
+    await batch.commit();
+    logger.info(`Auto-assigned ${parsedAssignments.length} tasks for project ${projectId}`);
+
+    return { success: true, assignments: parsedAssignments };
+  } catch (err) {
+    logger.error("Auto-Assign Error", err);
+    throw new HttpsError("internal", err.message || "Failed to auto-assign tasks");
+  }
+});
+
+// ========================
+// 4. GENERATE TASK SUGGESTIONS
+// ========================
+exports.generateTaskSuggestions = onCall(async (request) => {
+  if (!GEMINI_API_KEY) {
+    throw new HttpsError("internal", "Gemini API key not configured.");
+  }
+
+  const { projectTitle, projectDescription } = request.data;
+
+  if (!projectTitle || !projectDescription) {
+    throw new HttpsError("invalid-argument", "Project title and description are required.");
+  }
+
+  const systemPrompt = `You are an expert NGO project manager. Generate 8-12 specific, actionable tasks needed to complete the given project. 
+Return a JSON array: [{ title, description, estimatedDays, requiredSkills: [], priority (High/Medium/Low) }]
+Do not include markdown formatting, only pure JSON.`;
+
+  const userMessage = `Project Title: ${projectTitle}
+Project Description: ${projectDescription}`;
+
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: { text: systemPrompt } },
+          contents: [{ parts: [{ text: userMessage }] }],
+        }),
+      }
+    );
+
+    if (!response.ok) throw new Error("Gemini API error");
+
+    const data = await response.json();
+    let suggestions = data.candidates?.[0]?.content?.parts?.[0]?.text || "[]";
+    
+    // Extract JSON
+    const jsonMatch = suggestions.match(/\[[\s\S]*\]/);
+    if (jsonMatch) {
+      suggestions = jsonMatch[0];
+    }
+
+    return { suggestions: JSON.parse(suggestions) };
+  } catch (err) {
+    logger.error("Task Suggestion Error", err);
+    throw new HttpsError("internal", "Failed to generate task suggestions");
+  }
+});
+
+// ========================
+// 5. GET AI INSIGHTS
+// ========================
+exports.getProjectInsights = onCall(async (request) => {
+  if (!GEMINI_API_KEY) {
+    throw new HttpsError("internal", "Gemini API key not configured.");
+  }
+
+  const { projectData, tasksData, volunteersData } = request.data;
+
+  if (!projectData) {
+    throw new HttpsError("invalid-argument", "Project data is required.");
+  }
+
+  const systemPrompt = `You are a strategic project analyst. Provide concise insights about the project including:
+1. Project health (On Track/At Risk/Behind Schedule)
+2. Key risks
+3. Bottlenecks
+4. Recommendations
+5. Team performance summary
+
+Keep it brief and actionable.`;
+
+  const userMessage = `Project: ${JSON.stringify(projectData)}
+Tasks: ${JSON.stringify(tasksData || {})}
+Volunteers: ${JSON.stringify(volunteersData || {})}`;
+
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: { text: systemPrompt } },
+          contents: [{ parts: [{ text: userMessage }] }],
+        }),
+      }
+    );
+
+    if (!response.ok) throw new Error("Gemini API error");
+
+    const data = await response.json();
+    const insights = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+    return { insights };
+  } catch (err) {
+    logger.error("Project Insights Error", err);
+    throw new HttpsError("internal", "Failed to get project insights");
   }
 });
 

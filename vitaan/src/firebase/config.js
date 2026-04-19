@@ -3,7 +3,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { getFunctions } from "firebase/functions";
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAoyJdEIyhjQ3jbaCxsADFadfqmBWZk5wo",
@@ -25,7 +25,6 @@ export const storage = getStorage(app);
 export const functions = getFunctions(app);
 
 // Connect to functions emulator if running locally
-if (window.location.hostname === 'localhost') {
-  const { connectFunctionsEmulator } = await import('firebase/functions');
+if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
   connectFunctionsEmulator(functions, 'localhost', 5001);
 }
